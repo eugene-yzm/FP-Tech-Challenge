@@ -4,7 +4,8 @@
 angular.module('myApp.controllers', []).
 	controller('AppCtrl', function ($scope, $http, $window) {
 		// Insert controller code here
-		$scope.formInfo = {};	
+		$scope.formInfo = {};
+		$scope.selectedBrand;
 
 		$window.onload = function() {
 			console.log('Initializing Webpage');
@@ -14,6 +15,7 @@ angular.module('myApp.controllers', []).
 				 console.log('Get all success');
 				 var resp = response;
 				 $scope.shirts = resp;
+				 $scope.selectedBrand = resp[0].brand;
 			 })			
 			.error(function(err){
 				 //your code in case your post fails

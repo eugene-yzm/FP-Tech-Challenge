@@ -25,35 +25,62 @@ html.
 
 		
 		<form class="form-horizontal" ng-controller="AppCtrl" role="form">
+		{{selectedBrand}}
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Brand</label>
+			<div class="col-sm-4">
+			<div class="row" id="select_shirt">
+			<div class="col-sm-12">
+			<select ng-model="selectedBrand" class="form-control">
+			<option ng-repeat="x in shirts" value="{{x.brand}}">{{x.brand}}</option>
+			</select>
+			</div><!--/col-->
+			</div><!--row end-->
+			</div>
+		</div><!--form group end-->
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Style</label>
+			<div class="col-sm-4">
+			<div class="row" id="select_style">
+			<div class="col-sm-12">
+			<select data-ng-model="selectedBrand" class="form-control" ng-options="x.id as x.brand for x in shirts">
+			<option value=''>Select Brand</option>
+			</select>
+			</div><!--/col-->
+			</div><!--row end-->
+			</div>
+		</div><!--form group end-->
 		<div class="form-group">
 		<label for="inputName3" class="col-sm-2 control-label">Style</label>
 		<div class="col-sm-4">
 		<input class="form-control" id="inputName3" placeholder="Style" ng-model="formInfo.style_codes">
 		</div>
-		</div>
+		</div><!--form group end-->	
+		
 		<div class="form-group">
 		<label for="inputEmail3" class="col-sm-2 control-label">Size</label>
 		<div class="col-sm-4">
 		<input class="form-control" id="inputEmail3" placeholder="Size" ng-model="formInfo.size_codes">
 		</div>
-		</div>
+		</div><!--form group end-->	
 		<div class="form-group">
 		<label for="inputPassword3" class="col-sm-2 control-label">Color</label>
 		<div class="col-sm-4">
 		<input type="form-control" class="form-control" id="inputPassword3" placeholder="Default = White" ng-model="formInfo.color_codes">
 		</div>
-		</div>
+		</div><!--form group end-->	
 		<div class="form-group">
 		<label for="amount" class="col-sm-2 control-label">Amount</label>
 		<div class="col-sm-4">
 		<input type="form-control" class="form-control" id="amount" placeholder="$USD" ng-model="formInfo.amount">
 		</div>
-		</div>
+		</div><!--form group end-->	
 		<div class="form-group">
 		<div class="col-sm-offset-2 col-sm-10">
 		<button type="submit" ng-click="submitForm()" class="btn btn-success">Request quote</button>
 		</div>
-		</div>
+		</div><!--form group end-->	
 		</form>
 
 	</div>			
