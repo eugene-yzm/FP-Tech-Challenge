@@ -9,20 +9,22 @@ var db          = require('../config/db').connection;
 var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
 
-var style_codes, size_codes, color_codes;
-db.query('SELECT style_codes FROM apparel', function(err, rows, fields){ 
-	style_codes= rows;
-});
-db.query('SELECT size_codes FROM apparel', function(err, rows, fields){ 
-	size_codes= rows;
-});
-db.query('SELECT color_codes FROM apparel', function(err, rows, fields){ 
-	color_codes= rows;
-});
-
 // API endpoint for /api/apparel
-api.get('/api/apparel/:st/:sc/:cc"', function(req, res) {
-	res.json(results);
+api.get('/api/apparel', function(req, res) {
+	// Route for getting all shirts
+	if(req.query.all!=null){
+		db.query('SELECT * FROM apparel', function(err, rows, fields){ 
+			if (err){			
+				res.status(500).send('Something broke!');
+			};
+			console.log(rows);
+			res.json(rows);
+		});
+	};
+//	else if(req.query.id){
+//		db.query('SELECT * FROM apparel', function(err, rows, fields){ 
+//			console.log(rows);
+//		});
 
 });
 
@@ -32,9 +34,14 @@ api.post('/api/quote', function(req, res) {
 	console.log("Quote requested");
 	console.log(req.body);
 	var b;
-	a = getApparelPrice(req.body.style_codes, req.body.color_codes,req.body.size_codes).then(function (response) {
-		b= response;
-		res.send(b);
+	a = getApparelPrice(req.body.style_codes, req.body.color_codes,req.body.size_codes).then(function (err, req, response, next) {
+		if(!err){
+			b= response;
+			res.send(b);
+		if (err){			
+		}
+			res.status(500).send('Something broke!');
+		};
 	});
 });
 
@@ -59,12 +66,12 @@ var getApparelPrice = function getPrice(style_code, color_code, size_code) {
 			item = j['inv-balance']['item']
 			p=item[0]['$']['price']
 			console.log(p);
+			
 		    apparelPriceDeferred.resolve(p);
          });
 		});
 	}).on('error', function(error) {
-		// Handle EDI call errors here
-
+		// Handle EDI call errors here	
 	});
 
 	return apparelPriceDeferred.promise;
