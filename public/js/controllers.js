@@ -6,6 +6,8 @@ angular.module('myApp.controllers', []).
 		// Insert controller code here
 		$scope.formInfo = {};
 		$scope.selectedBrand;
+		$scope.shirts;
+		$scope.quote;
 
 		$window.onload = function() {
 			console.log('Initializing Webpage');
@@ -15,7 +17,7 @@ angular.module('myApp.controllers', []).
 				 console.log('Get all success');
 				 var resp = response;
 				 $scope.shirts = resp;
-				 $scope.selectedBrand = resp[0].brand;
+				 $scope.selectedBrand = 0;
 			 })			
 			.error(function(err){
 				 //your code in case your post fails
@@ -24,17 +26,38 @@ angular.module('myApp.controllers', []).
 		};
 
 		$scope.submitForm = function() {
+			$scope.formInfo.color_code = $scope.selectedColor;
+			$scope.formInfo.style_code = $scope.shirts[$scope. selectedBrand].style_code;
+			$scope.formInfo.size_code = $scope.selectedSize;
+			$scope.formInfo.amount = $scope.selectedAmount;
+			$scope.formInfo.weight = $scope.shirts[$scope. selectedBrand].weight;
 			console.log($scope.formInfo);
 			$http.post('/api/quote', $scope.formInfo)
 			.success(function(response){
 				 //your code in case the post succeeds
 				 console.log('Success');
-				 console.log(response);
+				 var resp = response;
+				 console.log(resp);
+				 $scope.quote = resp;
 			 })
 			.error(function(err){
 				 //your code in case your post fails
 				 console.log(err);
 			 });
+			 $scope.formInfo = {};
 		}
+		
+		$scope.formatList = function(s, delim) {
+			if (s==null){
+				return [];
+			}
+			else{
+				var a=s.split(delim).sort();
+				return a;				
+			}
+		}
+		$scope.number2money = function (num) {
+		return "$" + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+}
 	
 	});

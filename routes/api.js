@@ -33,16 +33,44 @@ api.post('/api/quote', function(req, res) {
 	// Insert Quoting API code here
 	console.log("Quote requested");
 	console.log(req.body);
-	var b;
-	a = getApparelPrice(req.body.style_codes, req.body.color_codes,req.body.size_codes).then(function (err, req, response, next) {
-		if(!err){
-			b= response;
-			res.send(b);
-		if (err){			
-		}
-			res.status(500).send('Something broke!');
-		};
+	var resp;
+	a = getApparelPrice(req.body.style_code, req.body.color_code,req.body.size_code);
+	a.then(
+	function(response){
+			var cost_object = {};
+			var num = Number(req.body.amount);
+			var weight = req.body.weight;
+			var resp = response;
+			var price = Number(resp.split('$')[1]);
+			var bare_total = price*num;
+			var markup = 0;
+			var grand_total = 0;
+			var shipping;
+			if (weight<=0.4){
+				shipping = num* (1*(num<48)+0.75*(num>=48));				
+			}
+			else if(weight>0.4){
+				shipping = num* (0.5*(num<48)+0.25*(num>=48));
+			}
+			var salesman = (bare_total+ shipping)*0.07 //Salesman markup
+			var total_order_cost = (bare_total+ shipping) + salesman
+			markup = total_order_cost * (0.50*(total_order_cost<800)+ 0.45*(total_order_cost>=800))
+			grand_total = total_order_cost + markup;
+			
+			console.log('Bare total: ',bare_total);
+			console.log('Shipping: ',shipping);
+			console.log('Salesman comp:' ,salesman);
+			console.log('Markup:' ,markup);
+			console.log('Grand_total:' ,grand_total);
+			
+			cost_object.bare_total=bare_total;
+			cost_object.shipping=shipping;
+			cost_object.salesman=salesman;
+			cost_object.markup=markup;
+			cost_object.grand_total=grand_total;
+			res.send(cost_object);
 	});
+
 });
 
 // Function for making an Inventory API call
@@ -57,7 +85,7 @@ var getApparelPrice = function getPrice(style_code, color_code, size_code) {
 	var url = 'https://www.alphashirt.com/cgi-bin/online/xml/inv-request.w?sr='+style_code+'&cc='+color_code+'&sc='+size_code+'&pr='+pr+'&zp='+zp+'&userName='+usr+'&password='+pw;
 	console.log(url);
 	var output = '';
-	
+	var p = 0;
 	https.get(url, function(res) {
 		res.on('data', function (data) {output += data.toString();});
 		res.on('end', function() {
@@ -65,10 +93,9 @@ var getApparelPrice = function getPrice(style_code, color_code, size_code) {
 			j=JSON.parse(JSON.stringify(result));
 			item = j['inv-balance']['item']
 			p=item[0]['$']['price']
-			console.log(p);
-			
-		    apparelPriceDeferred.resolve(p);
-         });
+			console.log('Unit price: ', p);    
+			apparelPriceDeferred.resolve(p);
+		});
 		});
 	}).on('error', function(error) {
 		// Handle EDI call errors here	

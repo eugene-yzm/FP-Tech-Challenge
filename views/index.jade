@@ -23,57 +23,53 @@ html.
 			
 	<div ng-app="myApp">
 
-		
 		<form class="form-horizontal" ng-controller="AppCtrl" role="form">
 		{{selectedBrand}}
+		{{selectedSize}}
+		{{selectedColor}}
 		<div class="form-group">
 			<label class="col-sm-2 control-label">Brand</label>
 			<div class="col-sm-4">
 			<div class="row" id="select_shirt">
 			<div class="col-sm-12">
-			<select ng-model="selectedBrand" class="form-control">
-			<option ng-repeat="x in shirts" value="{{x.brand}}">{{x.brand}}</option>
-			</select>
-			</div><!--/col-->
-			</div><!--row end-->
-			</div>
-		</div><!--form group end-->
-		
-		<div class="form-group">
-			<label class="col-sm-2 control-label">Style</label>
-			<div class="col-sm-4">
-			<div class="row" id="select_style">
-			<div class="col-sm-12">
-			<select data-ng-model="selectedBrand" class="form-control" ng-options="x.id as x.brand for x in shirts">
+			<select data-ng-model="selectedBrand" class="form-control" ng-options="index as x.brand for (index, x) in shirts">
 			<option value=''>Select Brand</option>
 			</select>
 			</div><!--/col-->
 			</div><!--row end-->
 			</div>
 		</div><!--form group end-->
-		<div class="form-group">
-		<label for="inputName3" class="col-sm-2 control-label">Style</label>
-		<div class="col-sm-4">
-		<input class="form-control" id="inputName3" placeholder="Style" ng-model="formInfo.style_codes">
-		</div>
-		</div><!--form group end-->	
 		
 		<div class="form-group">
-		<label for="inputEmail3" class="col-sm-2 control-label">Size</label>
-		<div class="col-sm-4">
-		<input class="form-control" id="inputEmail3" placeholder="Size" ng-model="formInfo.size_codes">
-		</div>
-		</div><!--form group end-->	
+			<label class="col-sm-2 control-label">Size</label>
+			<div class="col-sm-4">
+			<div class="row" id="select_style">
+			<div class="col-sm-12">
+			<select data-ng-model="selectedSize" class="form-control" ng-options="(x.split(':'))[0] as (x.split(':'))[1] for x in formatList(shirts[selectedBrand].size_codes, ';')">
+			<option value=''>Select Size</option>
+			</select>
+			</div><!--/col-->
+			</div><!--row end-->
+			</div>
+		</div><!--form group end-->
+
 		<div class="form-group">
-		<label for="inputPassword3" class="col-sm-2 control-label">Color</label>
-		<div class="col-sm-4">
-		<input type="form-control" class="form-control" id="inputPassword3" placeholder="Default = White" ng-model="formInfo.color_codes">
-		</div>
-		</div><!--form group end-->	
+			<label class="col-sm-2 control-label">Color</label>
+			<div class="col-sm-4">
+			<div class="row" id="select_style">
+			<div class="col-sm-12">
+			<select data-ng-model="selectedColor" class="form-control" ng-options="(x.split(':'))[0] as (x.split(':'))[2] for x in formatList(shirts[selectedBrand].color_codes, ';')">
+			<option value=''>Select Color</option>
+			</select>
+			</div><!--/col-->
+			</div><!--row end-->
+			</div>
+		</div><!--form group end-->		
+		
 		<div class="form-group">
-		<label for="amount" class="col-sm-2 control-label">Amount</label>
+		<label for="amount" class="col-sm-2 control-label">Volume</label>
 		<div class="col-sm-4">
-		<input type="form-control" class="form-control" id="amount" placeholder="$USD" ng-model="formInfo.amount">
+		<input type="form-control" class="form-control" id="amount" placeholder="# of articles" ng-model="selectedAmount">
 		</div>
 		</div><!--form group end-->	
 		<div class="form-group">
@@ -81,7 +77,23 @@ html.
 		<button type="submit" ng-click="submitForm()" class="btn btn-success">Request quote</button>
 		</div>
 		</div><!--form group end-->	
+
+		<div class="form-group">
+		<div class="container">
+		<div class="col-sm-4">
+		<table>
+		<tr ng-repeat="(x,y) in quote">
+		<td>{{x}}</td>
+		<td>{{number2money(y)}}</td>
+		</tr>
+		</table>
+		</div>
+		</div>
+		</div><!--form group end-->	
+		
 		</form>
+		
+
 
 	</div>			
 		<script src="js/lib/angular/angular.js"></script>
